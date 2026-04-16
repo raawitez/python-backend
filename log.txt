@@ -1,0 +1,5 @@
+INFO User logged in
+ERROR Invalid password
+INFO Page loaded
+WARNING Disk space low
+ERROR Database connection failed
