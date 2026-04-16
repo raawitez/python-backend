@@ -15,6 +15,10 @@ class UserUpdate(BaseModel):
     email: Optional[str] = None
     age: Optional[str] = None
 
+@router.get("/")
+def list_users():
+    return list(store.users.values())
+
 @router.get("/{user_id}")
 def get_user(user_id: int):
     if user_id not in store.users:
@@ -29,9 +33,9 @@ def create_user(user: UserCreate):
     global_next_id = store.next_id
 
     new_user = {
-        "id" : global_next_id
-        "name": user.name
-        "email": user.email
+        "id" : global_next_id,
+        "name": user.name,
+        "email": user.email,
         "age": user.age
     }
     store.users[global_next_id] = new_user
@@ -46,10 +50,10 @@ def update_user(user_id: int, user: UserCreate):
             detail=f"User {user_id} not found"
         )
     updated_user={
-        "id" = user_id,
-        "name" = user.name,
-        "email" = user.email,
-        "age" = user.age
+        "id": user_id,
+        "name": user.name,
+        "email": user.email,
+        "age": user.age
     }
 
     store.users[user_id] = updated_user
