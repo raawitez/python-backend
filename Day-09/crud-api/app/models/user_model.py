@@ -7,3 +7,5 @@ class User(Base):
     name = Column(String(50), nullable=False)
     email = Column(String(100), unique=True, nullable=False)
     age = Column(Integer,nullable=False)
+    password = Column(String(100), nullable=False)
+    bio = Column(String(200), nullable=true)

@@ -1,30 +1,20 @@
-log_parser = {"INFO" : 0,
-              "ERROR" : 0,
-              "WARNING" : 0
-              }
+from collections import Counter
+
+log_counts = Counter()
 errors = []
-try:
-    with open("log.txt") as f:
-        for x in f:
-            x=x.strip()
-            if not x:
-                continue
-            each_line = x.split()
-            log_type = each_line[0]
-            if log_type in log_parser:
-                log_parser[log_type]+=1
-            if log_type == "ERROR":
-                mssg = " ".join(each_line[1:])
-                errors.append(mssg)
 
-    for i in log_parser:
-        print(i+":",log_parser[i])
-    print()
+with open("log.txt") as f:
+    for line in f:
+        parts = line.strip().split(" ",1)
+        level = parts[0]
+        if level in ["INFO", "ERROR", "WARNING"]:
+            log_counts[level]+=1
+        if level == "ERROR":
+            errors.append(parts[1] if len(parts) > 1 else "")
 
-    print("Error logs:")
-    for i in errors:
-        print("-",i)
-    print()
-
-except FileNotFoundError:
-    print("File Not found")
+for level, count in log_counts.items():
+    print(f"{level}: {count}")
+print("\nError logs:")
+for err in errors:
+    print(f" - {err}")
+        

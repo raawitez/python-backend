@@ -1,69 +1,74 @@
 from fastapi import HTTPException
-from app.data import store
+from sqlalchemy.orm import Session
+from app.models.user_model import User
 
 class UserService:
+    def __init__(self, db: Session):
+        self.db = db
+
     def get_all_users(self):
-        return list(store.users.values())
+        return self.db.query(User).all()
     
     def get_user_by_id(self, user_id: int):
-        if user_id not in store.users:
-            raise HTTPException{
+        user = self.db.query(User).filter(User.id == user_id).first()
+        if not user:
+            raise HTTPException(
                 status_code = 404,
                 detail=f"User {user_id} not found"
-            }
-        return store.users[user_id]
+            )
+        return user
     
     def create_user(self, name:str, email: str, age:int, password: str, bio=None):
-        for existing in store.users.values():
-            if existing["email"]==email:
-                raise HTTPException(
-                    status_code=409,
-                    detail=f"Email {email} already registered"
-                )
-        user_id = store.next_id
-        new_user = {
+        existing = self.db.query(User).filter(User.email == email).first()
+        if existing:
+            raise HTTPException(
+                status_code=409,
+                detail=f"Email {email} already registered"
+            )
+        
+        new_user = User(
             "id": user_id,
             "name": name,
             "email": email,
             "age": age,
             "password": password,
             "bio": bio
-        }
+        )
 
-        store.users[user_id] = new_user
-        store.next_id += 1
+        self.db.add(new_user)
+        self.db.commit()
+        self.db.refresh(new_user)
         return new_user
     
     def update_user(self, user_id: int, name: str, email: str, age: int, password: str, bio=None):
-        self.get_user_by_id(user_id)  
+        user = self.get_user_by_id(user_id)  
+        user.name = name
+        user.email = email
+        user.age = age
+        user.password = password
+        user.bio = bio
 
-        updated_user = {
-            "id": user_id,
-            "name": name,
-            "email": email,
-            "age": age,
-            "password": password,
-            "bio": bio
-        }
-
-        store.users[user_id] = updated_user
-        return updated_user
+        self.db.commit()
+        self.db.refresh(user)
+        return user
 
     def partial_update_user(self, user_id: int, name=None, email=None, age=None, bio=None):
-        existing = self.get_user_by_id(user_id)  
+        user = self.get_user_by_id(user_id)  
         if name is not None:
-            existing["name"] = name
+            user.name = name
         if email is not None:
-            existing["email"] = email
+            user.email = email
         if age is not None:
-            existing["age"] = age
+            user.age = age
         if bio is not None:
-            existing["bio"] = bio
+            user.bio = bio
 
-        store.users[user_id] = existing
-        return existing
+        self.db.commit()
+        self.db.refresh(user)
+        return user
 
     def delete_user(self, user_id: int):
-        self.get_user_by_id(user_id)   
-        del store.users[user_id]
+        user = self.get_user_by_id(user_id)   
+        self.db.delete(user)
+        self.db.commit()
         return {"message": f"User {user_id} deleted successfully"}
