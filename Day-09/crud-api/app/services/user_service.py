@@ -27,12 +27,11 @@ class UserService:
             )
         
         new_user = User(
-            "id": user_id,
-            "name": name,
-            "email": email,
-            "age": age,
-            "password": password,
-            "bio": bio
+            name = name,
+            email = email,
+            age = age,
+            password = password,
+            bio = bio
         )
 
         self.db.add(new_user)

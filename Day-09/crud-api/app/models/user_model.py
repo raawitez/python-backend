@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from app.database import Base
 
+
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer,primary_key=True, autoincrement=True)
@@ -8,4 +9,4 @@ class User(Base):
     email = Column(String(100), unique=True, nullable=False)
     age = Column(Integer,nullable=False)
     password = Column(String(100), nullable=False)
-    bio = Column(String(200), nullable=true)
+    bio = Column(String(200), nullable=True)
