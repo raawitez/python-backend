@@ -9,7 +9,7 @@ class UserCreate(BaseModel):
         examples=["Teja"]
     )
     email: EmailStr = Field(
-        description="Valid email address"
+        description="Valid email address",
         examples=["teja@gmail.com"]
 
     )
