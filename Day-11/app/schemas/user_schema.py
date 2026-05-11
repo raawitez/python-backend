@@ -17,6 +17,12 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+        
+class UserUpdate(BaseModel):
+    name:  Optional[str]      = Field(default=None, min_length=2, max_length=50)
+    email: Optional[EmailStr] = None
+    age:   Optional[int]      = Field(default=None, ge=1, le=120)
+    bio:   Optional[str]      = Field(default=None, max_length=200)
 
 class UserLogin(BaseModel):
     email: EmailStr

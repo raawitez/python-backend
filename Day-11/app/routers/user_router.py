@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends
 from typing import List
 
-from app.schemas.user_schema import UserCreate, UserResponse, UserUpdate
+from app.schemas.user_schema import UserCreate, UserResponse
 from app.services.user_service import UserService
-from app.dependencies import get_user_service
+from app.dependencies import get_user_service, get_current_user
+from app.models.user_model import User
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -36,16 +37,25 @@ def update_user(user_id: int,user: UserCreate, service: UserService = Depends(ge
         bio = user.bio
     )
 
-@router.patch("/{user_id}", response_model=UserResponse, summary="Partially update a user (send only changed fields)")
-def partial_update_user(user_id: int, user: UserUpdate, service: UserService = Depends(get_user_service)):
+@router.patch("/{user_id}", response_model=UserResponse)
+def partial_update_user(
+    user_id: int,
+    user: UserUpdate,
+    service: UserService = Depends(get_user_service),
+    current_user: User = Depends(get_current_user)   
+):
     return service.partial_update_user(
-        user_id = user_id,
-        name = user.name,
-        email = user.email,
-        age = user.age,
-        bio = user.bio
+        user_id=user_id,
+        name=user.name,
+        email=user.email,
+        age=user.age,
+        bio=user.bio
     )
 
-@router.delete("/{user_id}", status_code=204, summary="Delete a user")
-def delete_user(user_id: int, service: UserService = Depends(get_user_service)):
+@router.delete("/{user_id}", summary="Delete a user — requires login")
+def delete_user(
+    user_id: int,
+    service: UserService = Depends(get_user_service),
+    current_user: User = Depends(get_current_user)
+):
     return service.delete_user(user_id)
