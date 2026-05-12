@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.database import Base, engine, SessionLocal
 from app.models import user_model
 from app.routers import user_router, auth_router
+from app.auth.security import hash_password
 
 app = FastAPI(
     title="User Management API",
@@ -29,14 +30,14 @@ def startup():
                     name="Teja",
                     email = "teja@gmail.com",
                     age = 22,
-                    password = "Teja@123",
+                    password = hash_password("Teja@123"),
                     bio = "Backend Developer"
                 ),
                 User(
                     name="Ravi",
                     email="ravi@gmail.com",
                     age = 22,
-                    password = "Ravi@123",
+                    password = hash_password("Ravi@123"),
                     bio = "Full stack developer"
                 ),
             ]
