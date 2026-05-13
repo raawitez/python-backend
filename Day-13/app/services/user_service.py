@@ -12,6 +12,7 @@ from app.cache.redis_client import(
 class UserService:
     def __init__(self, db: Session):
         self.db = db
+        self.last_cache_hit = False
 
     def get_all_users(self):
         cached = get_cache(CACHE_ALL_USERS)
@@ -19,6 +20,7 @@ class UserService:
             logger.info("Cache HIT - all_users")
             return cached
         
+        self.last_cache_hit = False
         logger.info("Cache MISS - querying database for all_users")
         users = self.db.query(User).all()
         users_data = []
@@ -85,7 +87,7 @@ class UserService:
         return new_user
     
     def update_user(self, user_id:int, name:str, email:str, age: int, password:str,bio = None):
-        user = self.get_user_by_id(user_id)
+        user = self._get_user_or_404(user_id)
         existing = self.db.query(User).filter(User.email == email).first()
         if existing and existing.id != user_id:
             raise HTTPException(
@@ -106,7 +108,7 @@ class UserService:
         return user
     
     def partial_update_user(self, user_id:int, name = None, email = None, age= None, bio =None):
-        user = self.get_user_by_id(user_id)
+        user = self._get_user_or_404(user_id)
         if name is not None:
             user.name = name
         if email is not None:
@@ -123,7 +125,7 @@ class UserService:
         return user
     
     def delete_user(self, user_id:int):
-        user = self.get_user_by_id(user_id)
+        user = self._get_user_or_404(user_id)
         self.db.delete(user)
         self.db.commit()
 
