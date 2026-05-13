@@ -8,3 +8,9 @@
 2026-05-13 20:36:19 | INFO     | API startup complete
 2026-05-13 20:36:19 | INFO     | Database has 2 existing users
 2026-05-13 20:36:19 | INFO     | API startup complete. Listening for requests...
+2026-05-13 20:36:26 | INFO     | Starting User Management API...
+2026-05-13 20:36:26 | INFO     | Database tables verified
+2026-05-13 20:36:50 | WARNING  | Redis connection failed: Error 10061 connecting to localhost:6379. No connection could be made because the target machine actively refused it.
+2026-05-13 20:36:50 | INFO     | API startup complete
+2026-05-13 20:36:50 | INFO     | Database has 2 existing users
+2026-05-13 20:36:50 | INFO     | API startup complete. Listening for requests...
