@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from typing import List
 
 from app.schemas.user_schema import UserCreate, UserResponse, UserUpdate
@@ -9,11 +9,14 @@ from app.models.user_model import User
 router = APIRouter(prefix="/users", tags=["Users"])
 
 @router.get("/", response_model=List[UserResponse], summary="List all users")
-def list_users(service: UserService = Depends(get_user_service)):
-    return service.get_all_users()
+def list_users(response: Response, service: UserService = Depends(get_user_service)):
+    result = service.get_all_users()
+    if isinstance(result, list) and len(result)>0:
+        response.headers["X-Cache"] = "HIT" if service.last_cache_hit else "MISS"
+    return result
 
 @router.get("/{user_id}",response_model=UserResponse, summary="Get a user by ID")
-def get_user(user_id: int, service: UserService = Depends(get_user_service)):
+def get_user(user_id: int, response: Response,service: UserService = Depends(get_user_service)):
     return service.get_user_by_id(user_id)
 
 @router.post("/", response_model=UserResponse, status_code=201, summary="Create a new user")
