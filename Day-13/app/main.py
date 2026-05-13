@@ -6,6 +6,7 @@ from app.middleware.logging_middleware import log_requests
 from app.core.logger import setup_logger
 from app.core.exceptions import global_exception_handler
 from app.auth.security import hash_password
+from app.cache.redis_client import check_redis_connection
 
 setup_logger()
 
@@ -27,6 +28,10 @@ def startup():
 
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables verified")
+    
+    check_redis_connection()
+    logger.info("API startup complete")
+    
     db = SessionLocal()
     try:
         from app.models.user_model import User
