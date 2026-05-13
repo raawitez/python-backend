@@ -52,3 +52,10 @@ def delete_pattern(pattern: str):
             logger.debug(f"Cache cleared pattern: '{pattern}' ({len(keys)} keys)")
     except Exception as e:
         logger.warning(f"Redis pattern delete failed: {e}")
+
+CACHE_ALL_USERS = "all_users"
+CACHE_USER = "user:{user_id}"
+
+TTL_SHORT = 30
+TTL_MEDIUM = 60
+TTL_LONG = 300
