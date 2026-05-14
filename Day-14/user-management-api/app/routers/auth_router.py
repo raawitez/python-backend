@@ -45,7 +45,7 @@ def register(
 
 @router.post("/login", response_model=TokenResponse)
 def login(credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == credentials.email).first()
+    user = db.query(User).filter(User.email == credentials.username).first()
     if not user or not verify_password(credentials.password, user.password):
         raise HTTPException(
             status_code=401,
