@@ -1,0 +1,16 @@
+# Database
+users.db
+
+# Logs
+logs/app.log
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+env/
+venv/
+
+# Environment variables
+.env
