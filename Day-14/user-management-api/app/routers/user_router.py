@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Response, BackgroundTasks
 from typing import List
 
 from app.schemas.user_schema import UserCreate, UserResponse, UserUpdate
 from app.services.user_service import UserService
 from app.dependencies import get_user_service, get_current_user
 from app.models.user_model import User
+from app.tasks.email_tasks import send_account_deletion_email
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -58,7 +59,15 @@ def partial_update_user(
 @router.delete("/{user_id}", summary="Delete a user — requires login")
 def delete_user(
     user_id: int,
+    background_tasks: BackgroundTasks,
     service: UserService = Depends(get_user_service),
     current_user: User = Depends(get_current_user)
 ):
-    return service.delete_user(user_id)
+    user = service.get_user_by_id(user_id)
+    result = service.delete_user(user_id)
+    background_tasks.add_task(
+        send_account_deletion_email,
+        email=user["email"],
+        name=user["name"]
+    )
+    return result
