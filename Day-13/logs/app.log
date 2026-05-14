@@ -79,3 +79,19 @@
 2026-05-13 20:50:53 | INFO     | [0ac90567] -> GET /users/ from 127.0.0.1
 2026-05-13 20:50:53 | INFO     | Cache HIT - all_users
 2026-05-13 20:50:53 | INFO     | [0ac90567 <- 200 ]GET /users/ in 4.0ms
+2026-05-13 20:52:08 | INFO     | Starting User Management API...
+2026-05-13 20:52:08 | INFO     | Database tables verified
+2026-05-13 20:52:08 | INFO     | Redis connection successful
+2026-05-13 20:52:08 | INFO     | API startup complete
+2026-05-13 20:52:08 | INFO     | Database has 3 existing users
+2026-05-13 20:52:08 | INFO     | API startup complete. Listening for requests...
+2026-05-13 20:53:27 | INFO     | [e631cc88] -> GET /docs from 127.0.0.1
+2026-05-13 20:53:27 | INFO     | [e631cc88 <- 200 ]GET /docs in 1.9ms
+2026-05-13 20:53:27 | INFO     | [7404e95b] -> GET /openapi.json from 127.0.0.1
+2026-05-13 20:53:27 | INFO     | [7404e95b <- 200 ]GET /openapi.json in 34.8ms
+2026-05-13 20:53:33 | INFO     | [d784bb72] -> GET /users/ from 127.0.0.1
+2026-05-13 20:53:33 | INFO     | Cache MISS - querying database for all_users
+2026-05-13 20:53:33 | INFO     | [d784bb72 <- 200 ]GET /users/ in 24.0ms
+2026-05-13 20:53:38 | INFO     | [826e0378] -> GET /users/ from 127.0.0.1
+2026-05-13 20:53:38 | INFO     | Cache HIT - all_users
+2026-05-13 20:53:38 | INFO     | [826e0378 <- 200 ]GET /users/ in 17.0ms
