@@ -1,15 +1,9 @@
-# consumer.py
-
 import pika
 import json
 import time
 
 
 def process_event(event: dict):
-    """
-    Handle a user event.
-    Each event type gets different processing logic.
-    """
     event_type = event.get("event")
 
     if event_type == "user_registered":
@@ -18,7 +12,7 @@ def process_event(event: dict):
             f"{event.get('email')} (id: {event.get('user_id')})"
         )
         print(f"  [PROCESSING] Sending welcome email...")
-        time.sleep(0.5)   # simulate email sending
+        time.sleep(0.5)   
         print(f"  [PROCESSING] Welcome email sent.")
 
     elif event_type == "user_updated":
@@ -58,25 +52,20 @@ def callback(ch, method, properties, body):
     print(f"\n[CONSUMER] Message received:")
 
     try:
-        # Decode bytes to string, then parse JSON to dict
         message = json.loads(body.decode("utf-8"))
         print(f"  Event: {message.get('event')}")
         print(f"  Data:  {message}")
 
-        # Process the event
         process_event(message)
 
-        # Send acknowledgement — tells RabbitMQ to remove message
         ch.basic_ack(delivery_tag=method.delivery_tag)
         print(f"  [ACK] Message acknowledged and removed from queue.")
 
     except Exception as e:
         print(f"  [ERROR] Failed to process message: {e}")
-        # Negative acknowledgement — requeue the message
-        # nack = "I failed, please try again"
         ch.basic_nack(
             delivery_tag=method.delivery_tag,
-            requeue=True    # put it back in queue for retry
+            requeue=True   
         )
 
 
@@ -94,19 +83,14 @@ def main():
     )
     channel = connection.channel()
 
-    # Declare same queue as producer
-    # Safe to call even if queue already exists
     channel.queue_declare(queue=queue_name, durable=True)
 
-    # Only fetch 1 message at a time
-    # Don't send next until current is acknowledged
     channel.basic_qos(prefetch_count=1)
 
-    # Register callback — called for each message
     channel.basic_consume(
         queue=queue_name,
         on_message_callback=callback,
-        auto_ack=False    # manual ack — we control when message is removed
+        auto_ack=False    
     )
 
     print(f"[CONSUMER] Waiting for messages in '{queue_name}'...")
@@ -114,7 +98,6 @@ def main():
     print("-" * 50)
 
     try:
-        # Blocks here forever — processes messages as they arrive
         channel.start_consuming()
     except KeyboardInterrupt:
         print("\n[CONSUMER] Stopping...")
